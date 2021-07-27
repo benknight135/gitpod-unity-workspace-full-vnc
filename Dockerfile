@@ -79,8 +79,7 @@ RUN mkdir -p "/root/.config/Unity Hub" \
 
 # Configure
 RUN mkdir -p "${UNITY_PATH}/editors" \
- && unity-hub install-path --set "${UNITY_PATH}/editors/" \
- && find /tmp -mindepth 1 -delete
+ && unity-hub install-path --set "${UNITY_PATH}/editors/"
 
 # Install Unity Editor
 RUN unity-hub install --version 2020.3.13f1 --changeset 71691879b7f5 --m mac-mono -m windows-mono
