@@ -65,13 +65,12 @@ RUN wget --no-verbose -O /tmp/UnityHub.AppImage "https://public-cdn.cloud.unity3
  && chmod +x /tmp/UnityHub.AppImage \
  && cd /tmp \
  && /tmp/UnityHub.AppImage --appimage-extract \
- && cp -R /tmp/squashfs-root/* / \
- && rm -rf /tmp/squashfs-root /tmp/UnityHub.AppImage \
  && mkdir -p "$UNITY_PATH" \
- && mv /AppRun /opt/unity/UnityHub
+ && cp -R /tmp/squashfs-root/* /opt/unity/ \
+ && rm -rf /tmp/squashfs-root /tmp/UnityHub.AppImage
 
 # Alias to "unity-hub" with default params
-RUN echo '#!/bin/bash\nxvfb-run -ae /dev/stdout /opt/unity/UnityHub --no-sandbox --headless "$@"' > /usr/bin/unity-hub \
+RUN echo $'#!/bin/bash\ncd /opt/unity && xvfb-run -ae /dev/stdout /opt/unity/unityhub --no-sandbox --headless "$@"' > /usr/bin/unity-hub \
  && chmod +x /usr/bin/unity-hub
 
 # Accept
@@ -82,3 +81,14 @@ RUN mkdir -p "/root/.config/Unity Hub" \
 RUN mkdir -p "${UNITY_PATH}/editors" \
  && unity-hub install-path --set "${UNITY_PATH}/editors/" \
  && find /tmp -mindepth 1 -delete
+
+# Install Unity Editor
+RUN unity-hub install --version 2020.3.13f1 --changeset 71691879b7f5 --m mac-mono -m windows-mono
+
+###########################
+#  Alias to unity-editor  #
+###########################
+
+RUN echo '#!/bin/bash' > /usr/bin/unity-editor \
+  && chmod +x /usr/bin/unity-editor
+RUN echo 'xvfb-run -ae /dev/stdout "$UNITY_PATH/Editor/Unity" -batchmode "$@"' >> /usr/bin/unity-editor
