@@ -1,7 +1,7 @@
-name: Docker Image CI
+name: Pull Request
 
 on:
-  push:
+  pull_request:
     branches: [ latest ]
 
 jobs:
@@ -15,9 +15,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-pull-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-pull-buildx-
       
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
@@ -36,7 +36,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          push: true
+          push: false
           tags: benknight135/gitpod-unity-workspace-full-vnc:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
